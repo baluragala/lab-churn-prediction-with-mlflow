@@ -1,0 +1,27 @@
+# Churn Prediction Experimentation Pipeline
+# Python 3.9+ required
+
+# Core data processing
+pandas>=2.0.0,<2.2.0
+numpy>=1.24.0,<2.0.0
+
+# Visualization
+matplotlib>=3.7.0,<3.9.0
+seaborn>=0.12.0
+
+# Machine Learning
+scikit-learn>=1.3.0,<1.5.0
+
+# PyCaret for AutoML (base package without heavy extras)
+pycaret>=3.0.0,<3.4.0
+
+# MLflow for experiment tracking
+mlflow>=2.9.0,<2.18.0
+
+# Optuna for hyperparameter tuning
+optuna>=3.4.0
+optuna-integration[sklearn]
+
+# Required for compatibility
+pyyaml>=6.0.0
+joblib>=1.3.0
