@@ -688,6 +688,8 @@ def tune_model_with_optuna(
             "tuned_auc": tuned_auc,
             "improvement": tuned_auc - base_auc,
             "accuracy": tuned_accuracy,
+            "precision": tuned_precision,
+            "recall": tuned_recall,
             "f1": tuned_f1
         }
         
@@ -704,7 +706,8 @@ def tune_model_with_optuna(
 
 def create_final_model_artifacts(
     model: Any,
-    df: pd.DataFrame
+    df: pd.DataFrame,
+    tuning_results: Dict[str, Any]
 ) -> None:
     """
     Create and log final model artifacts.
@@ -824,9 +827,20 @@ def create_final_model_artifacts(
         )
         print("   ✅ Model registered as: ChurnPredictionModel")
         
-        # Log final summary
+        # Log final summary parameters
         mlflow.log_param("model_status", "finalized")
         mlflow.log_param("training_data_size", len(df))
+        mlflow.log_param("model_type", "Gradient Boosting (Tuned)")
+        
+        # Log final metrics from tuning results for comparison
+        mlflow.log_metrics({
+            "accuracy": tuning_results.get("accuracy", 0),
+            "precision": tuning_results.get("precision", 0),
+            "recall": tuning_results.get("recall", 0),
+            "auc": tuning_results.get("tuned_auc", 0),
+            "f1_score": tuning_results.get("f1", 0),
+            "auc_improvement": tuning_results.get("improvement", 0)
+        })
 
 
 def print_experiment_summary() -> None:
@@ -930,7 +944,7 @@ def main() -> None:
     tuned_model, tuning_results = tune_model_with_optuna(df_engineered, 'gbc')
     
     # Step 10: Create final model and artifacts
-    create_final_model_artifacts(tuned_model, df_engineered)
+    create_final_model_artifacts(tuned_model, df_engineered, tuning_results)
     
     # Step 11: Print experiment summary
     print_experiment_summary()
